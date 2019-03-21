@@ -1,0 +1,118 @@
+1.department wise employee count
+
+
+select DEPARTMENT,count(*) as 'employees in dept' from employee group by DEPARTMENT order by 'employees in dept' DESC;
++------------+-------------------+
+| DEPARTMENT | employees in dept |
++------------+-------------------+
+| cse        |                 3 |
+| ece        |                 1 |
+| it         |                 2 |
+| mech       |                 1 |
++------------+-------------------+
+2.departments having average salary greater than 50000
+
+
+ select DEPARTMENT,avg(SALARY) as 'averageslary' from employee group by DEPARTMENT having averageslary>50000;
++------------+--------------+
+| DEPARTMENT | averageslary |
++------------+--------------+
+| cse        |       178622 |
+| ece        |        56555 |
+| it         |       230000 |
+| mech       |        56555 |
++------------+--------------+
+
+3.//list country,department wise average salary
+
+SELECT (SELECT NAME FROM COUNTRY C WHERE C.ID=E.COUNTRY_ID) AS COUNTRY, E.DEPARTMENT, AVG(E.SALARY) AS AVERAGE_SALARY FROM EMPLOYEE E GROUP BY E.DEPARTMENT, E.COUNTRY_ID;
++---------------+------------+----------------+
+| COUNTRY       | DEPARTMENT | AVERAGE_SALARY |
++---------------+------------+----------------+
+| india         | cse        |          50000 |
+| USA           | cse        |          56555 |
+| europe        | cse        |         700000 |
+| unitedkingdom | ece        |          56555 |
+| USA           | it         |          60000 |
+| europe        | it         |         400000 |
+| russia        | mech       |          56555 |
+
++---------------+------------+----------------+
+
+
+4.list country,department having employee count>2
+
+
+ select (SELECT NAME FROM COUNTRY C WHERE C.ID=E.COUNTRY_ID) AS COUNTRY,E.DEPARTMENT,count(e.id) as'employee count' from EMPLOYEE E group by E.DEPARTMENT,E.country_id having count(e.id)>1;
++---------+------------+----------------+
+| COUNTRY | DEPARTMENT | employee count |
++---------+------------+----------------+
+| india   | cse        |              2 |
+| USA     | cse        |              2 |
++---------+------------+----------------+
+
+
+5.select departments with employees whose name contains 's' and exists more than one country
+
+ select department,(SELECT NAME FROM employee e WHERE name like "%s%") as employees,count(e.country_id) from employee e inner join country c on e.country_id=c.id group by e.department having count(e.country_id)>2;
++------------+-----------+---------------------+
+| department | employees | count(e.country_id) |
++------------+-----------+---------------------+
+| cse        | kowshiq   |                   5 |
++------------+-----------+---------------------+
+
+6.no of employees under each manager dispaly name and employee count
+
+select e.firstname,count(m.reportsTo) from employees e join employees m on e.employeenumber=m.reportsTo group by e.employeenumber,m.reportsTo;
++-----------+--------------------+
+| firstname | count(m.reportsTo) |
++-----------+--------------------+
+| Diane     |                  2 |
+| Mary      |                  4 |
+| William   |                  3 |
+| Gerard    |                  6 |
+| Anthony   |                  6 |
+| Mami      |                  1 |
++-----------+--------------------+
+
+7.department that is present in more than 2 countries;
+
+
+.select department,count(e.country_id) from employee e inner join country c on e.country_id=c.id group by e.department having count(e.country_id)>2;
++------------+---------------------+
+| department | count(e.country_id) |
++------------+---------------------+
+| cse        |                   5 |
++------------+---------------------+
+
+8. List Customer Wise Unique Product Ordered:Customer Name, Product Name:
+
+
+Select C.customerName, P.productName from Customers C join Orders O on C.customerNumber=O.customerNumber
+join OrderDetails OD on O.orderNumber=OD.orderNumber join Products P on P.productCode=OD.productCode;
+
+
+
+9. List Product Wise Total Order Amount:
+
+Select P.productname,sum(OD.priceEach) from Products P join OrderDetails OD on P.productCode=OD.productCode group by P.productname;
+
+
+
+10. List Details OF Manager Who has Highest Sales:
+
+
+Select E.firstName,sum(P.amount) from Employees E join Employees F on E.EmployeeNumber=F.reportsTo
+join Customers C on C.salesRepEmployeeNumber=F.EmployeeNumber
+join Payments P on P.customerNumber=C.customerNumber group by E.firstName order by sum(P.amount) desc;
+
+
+11.list customer wise unique products ordered-customer,product name
+
+select distinct(productName),c.customerName from customers c  inner join orders o2 on  c.customerNumber =o2.customerNumber inner join orderdetails o1 on  o1.orderNumber= o2.orderNumber  inner join  products p on p.productCode = o1.productCode;
+
+
+10.list monthwise no of orders placed for each product line
+select extract(month from o.orderdate) as month ,count(*)  as totalorders,p.productline from customers c join orders o on c.customernumber=o.customernumber
+join orderdetails o2 on o2.ordernumber=o.ordernumber join products p  on p.productcode=o2.productcode  group by month,p.productline ;
+
